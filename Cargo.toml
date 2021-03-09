@@ -1,0 +1,26 @@
+[package]
+name = "sign-in-with-apple"
+version = "0.1.0"
+authors = ["Stephan Dilly <dilly.stephan@gmail.com>"]
+edition = "2018"
+homepage = "https://github.com/gameroasters/sign-in-with-apple"
+repository = "https://github.com/gameroasters/sign-in-with-apple"
+readme = "README.md"
+license = "MIT"
+categories = ["web-programming","asynchronous"]
+keywords = [
+    "apple",
+    "mobile",
+    "jwt",
+    "signin",
+    "validation",
+]
+
+[dependencies]
+jsonwebtoken = "7"
+serde = {version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+hyper = { version = "0.14", features = ["http1"] }
+hyper-tls = "0.5"
+tokio = { version = "1.2", features = ["rt-multi-thread","net","macros"] }
+thiserror = "1.0"
