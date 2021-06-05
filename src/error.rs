@@ -1,5 +1,4 @@
 //! Convenience types for lib specific error handling
-#![allow(clippy::pub_enum_variant_names)]
 
 use thiserror::Error;
 
@@ -8,7 +7,7 @@ pub enum Error {
     #[error("Header algorithm unspecified")]
     HeaderAlgorithmUnspecified,
     #[error("Apple Keys Error")]
-    KeysError,
+    AppleKeys,
     #[error("Key ID not found")]
     KidNotFound,
     #[error("Key not found")]
@@ -20,11 +19,11 @@ pub enum Error {
     #[error(transparent)]
     Jwt(#[from] jsonwebtoken::errors::Error),
     #[error("serde_json error: {0}")]
-    SerdeError(#[from] serde_json::Error),
+    SerdeJson(#[from] serde_json::Error),
     #[error("hyper error: {0}")]
-    HyperError(#[from] hyper::Error),
+    Hyper(#[from] hyper::Error),
     #[error("http error: {0}")]
-    HttpError(#[from] hyper::http::Error),
+    Http(#[from] hyper::http::Error),
 }
 
 /// Convenience type for Results

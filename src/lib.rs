@@ -33,7 +33,7 @@ async fn fetch_apple_keys() -> Result<HashMap<String, KeyComponents>> {
 
     let mut resp: HashMap<String, Vec<KeyComponents>> = serde_json::from_slice(&buf)?;
 
-    resp.remove("keys").map_or(Err(Error::KeysError), |res| {
+    resp.remove("keys").map_or(Err(Error::AppleKeys), |res| {
         Ok(res
             .into_iter()
             .map(|val| (val.kid.clone(), val))
