@@ -1,6 +1,6 @@
 [package]
 name = "sign-in-with-apple"
-version = "0.1.1"
+version = "0.1.2"
 authors = ["Stephan Dilly <dilly.stephan@gmail.com>"]
 description = "Sign In With Apple Validation in Async Rust"
 edition = "2018"
@@ -16,7 +16,6 @@ keywords = [
     "signin",
     "validation",
 ]
-resolver = "2"
 
 [dependencies]
 jsonwebtoken = "7"
