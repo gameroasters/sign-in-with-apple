@@ -11,8 +11,10 @@
 mod data;
 mod error;
 
+pub use error::Error;
+
 use data::{Claims, KeyComponents, APPLE_ISSUER, APPLE_PUB_KEYS};
-use error::{Error, Result};
+use error::Result;
 use hyper::{body, Body, Client, Request};
 use hyper_tls::HttpsConnector;
 use jsonwebtoken::{self, decode, decode_header, DecodingKey, TokenData, Validation};
