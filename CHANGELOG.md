@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## Changed
+- expose `decode_token` fn publicly
+- allow decoding token with different `Claims`
+
 ## Fixed
 - make `Error` public
 
