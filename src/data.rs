@@ -27,7 +27,7 @@ pub struct Claims {
 	pub auth_time: i32,
 }
 
-/// see https://developer.apple.com/documentation/sign_in_with_apple/processing_changes_for_sign_in_with_apple_accounts
+/// see <https://developer.apple.com/documentation/sign_in_with_apple/processing_changes_for_sign_in_with_apple_accounts>
 #[derive(Debug, PartialEq, Serialize, Deserialize)]
 pub struct ClaimsServer2Server {
 	pub iss: String,
