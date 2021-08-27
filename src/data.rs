@@ -1,4 +1,4 @@
-use serde::{Deserialize, Serialize};
+use serde::{Deserialize, Deserializer, Serialize};
 
 pub const APPLE_PUB_KEYS: &str =
 	"https://appleid.apple.com/auth/keys";
@@ -27,13 +27,18 @@ pub struct Claims {
 	pub auth_time: i32,
 }
 
+/// see https://developer.apple.com/documentation/sign_in_with_apple/processing_changes_for_sign_in_with_apple_accounts
 #[derive(Debug, PartialEq, Serialize, Deserialize)]
 pub struct ClaimsServer2Server {
 	pub iss: String,
 	pub aud: String,
+	pub exp: i32,
 	pub iat: i32,
 	pub jti: String,
-	pub events: Vec<ClaimsServer2ServerEvent>,
+	/// Note that this is documented different to how it is sent.
+	/// see https://developer.apple.com/forums/thread/655485
+	#[serde(deserialize_with = "deserialize_events")]
+	pub events: ClaimsServer2ServerEvent,
 }
 
 #[derive(Debug, PartialEq, Serialize, Deserialize)]
@@ -41,7 +46,27 @@ pub struct ClaimsServer2ServerEvent {
 	#[serde(rename = "type")]
 	pub event_type: String,
 	pub sub: String,
-	pub event_time: i32,
+	pub event_time: i64,
 	pub email: Option<String>,
-	pub is_private_email: Option<bool>,
+	pub is_private_email: Option<String>,
+}
+
+// The signature of a deserialize_with function must follow the pattern:
+//
+//    fn deserialize<'de, D>(D) -> Result<T, D::Error>
+//    where
+//        D: Deserializer<'de>
+//
+// although it may also be generic over the output types T.
+pub fn deserialize_events<'de, D>(
+	deserializer: D,
+) -> Result<ClaimsServer2ServerEvent, D::Error>
+where
+	D: Deserializer<'de>,
+{
+	let s = String::deserialize(deserializer)?;
+	let events: ClaimsServer2ServerEvent =
+		serde_json::from_str(s.as_str())
+			.map_err(serde::de::Error::custom)?;
+	Ok(events)
 }

@@ -11,9 +11,10 @@
 mod data;
 mod error;
 
+pub use data::{Claims, ClaimsServer2Server};
 pub use error::Error;
 
-use data::{Claims, KeyComponents, APPLE_ISSUER, APPLE_PUB_KEYS};
+use data::{KeyComponents, APPLE_ISSUER, APPLE_PUB_KEYS};
 use error::Result;
 use hyper::{body, Body, Client, Request};
 use hyper_tls::HttpsConnector;
@@ -99,7 +100,7 @@ pub async fn validate(
 
 #[cfg(test)]
 mod tests {
-	use crate::{validate, Error};
+	use crate::{decode_token, validate, ClaimsServer2Server, Error};
 
 	#[tokio::test]
 	async fn validate_test() -> std::result::Result<(), Error> {
@@ -110,7 +111,30 @@ mod tests {
 		let result =
 			validate(user_token.to_string(), token.to_string(), true)
 				.await?;
-		println!("{:?}", result);
+
+		assert_eq!(result.claims.sub, user_token);
+		assert_eq!(result.claims.aud, "com.gameroasters.stack4");
+
 		Ok(())
+	}
+
+	#[tokio::test]
+	async fn test_server_to_server_payload() {
+		let token = "eyJraWQiOiJlWGF1bm1MIiwiYWxnIjoiUlMyNTYifQ.eyJpc3MiOiJodHRwczovL2FwcGxlaWQuYXBwbGUuY29tIiwiYXVkIjoiY29tLmdhbWVyb2FzdGVycy5zdGFjazQiLCJleHAiOjE2MzAxNzE4MTIsImlhdCI6MTYzMDA4NTQxMiwianRpIjoiQjk0T2REMDNwRnNhWWFOLUZ0djdtQSIsImV2ZW50cyI6IntcInR5cGVcIjpcImVtYWlsLWRpc2FibGVkXCIsXCJzdWJcIjpcIjAwMTAyNi4xNjExMmIzNjM3ODQ0MGQ5OTVhZjIyYjI2OGYwMDk4NC4xNzQ0XCIsXCJldmVudF90aW1lXCI6MTYzMDA4NTQwMzY0OCxcImVtYWlsXCI6XCJ6ZGZ1N2p0dXVzQHByaXZhdGVyZWxheS5hcHBsZWlkLmNvbVwiLFwiaXNfcHJpdmF0ZV9lbWFpbFwiOlwidHJ1ZVwifSJ9.SSdUM88GHqrS0QXHtaehbPxLQkAB3s1-qzcy3i2iRoSCzDhA1Q3o_FhiCbqOsbiPDOQ9aA1Z8-oAz1p3-TMfHy6QdIs1vLxBmNTe5IazNJw_7wwDZG2nr-bsKPUQldE--tK1EUFXQqQxQbfjJJE0JFEwPib2rmnb-t0mRopKMx2wg3CUlI64BHI2O8giGCbWB7UbJs2BpcUuapVShCIR7Eqxy0_ud81CUDjKzZK2CcmSRGDIk8g9pRqOHmPUFMOrDjj6_hUR9mf-xCrCedoC9f05z_yKD026A4gWGFn4pxTP8-uDTRPxcONax_vnQHBUDigYi8HXuzWorTx2ORPjaw";
+
+		let result = decode_token::<ClaimsServer2Server>(
+			token.to_string(),
+			true,
+		)
+		.await
+		.unwrap();
+
+		assert_eq!(result.claims.aud, "com.gameroasters.stack4");
+		assert_eq!(
+			result.claims.events.sub,
+			"001026.16112b36378440d995af22b268f00984.1744"
+		);
+
+		println!("{:?}", result);
 	}
 }
