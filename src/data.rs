@@ -22,8 +22,8 @@ pub struct Claims {
 	pub iat: i32,
 	pub sub: String,
 	pub c_hash: String,
-	pub email: String,
-	pub email_verified: String,
+	pub email: Option<String>,
+	pub email_verified: Option<String>,
 	pub auth_time: i32,
 }
 

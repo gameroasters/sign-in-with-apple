@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Fixed
 - make `Error` public
+- email claims need to be optional since user might not grant them
 
 ## [0.1.2] - 2021-07-01
 
