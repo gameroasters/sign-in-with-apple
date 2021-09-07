@@ -98,9 +98,27 @@ pub async fn validate(
 	Ok(token_data)
 }
 
+/// allows to check whether the `validate` result was errored because of an expired signature
+#[must_use]
+pub fn is_expired(
+	validate_result: &Result<TokenData<Claims>>,
+) -> bool {
+	if let Err(Error::Jwt(error)) = validate_result {
+		return matches!(
+			error.kind(),
+			jsonwebtoken::errors::ErrorKind::ExpiredSignature
+		);
+	}
+
+	false
+}
+
 #[cfg(test)]
 mod tests {
-	use crate::{decode_token, validate, ClaimsServer2Server, Error};
+	use crate::{
+		decode_token, is_expired, validate, ClaimsServer2Server,
+		Error,
+	};
 
 	#[tokio::test]
 	async fn validate_test() -> std::result::Result<(), Error> {
@@ -129,6 +147,20 @@ mod tests {
 		)
 		.await
 		.unwrap();
+	}
+
+	#[tokio::test]
+	async fn validate_expired() {
+		let token = "eyJraWQiOiJlWGF1bm1MIiwiYWxnIjoiUlMyNTYifQ.eyJpc3MiOiJodHRwczovL2FwcGxlaWQuYXBwbGUuY29tIiwiYXVkIjoiY29tLmdhbWVyb2FzdGVycy5zdGFjazQiLCJleHAiOjE2MzA4Mjc4MzAsImlhdCI6MTYzMDc0MTQzMCwic3ViIjoiMDAxMDI2LjE2MTEyYjM2Mzc4NDQwZDk5NWFmMjJiMjY4ZjAwOTg0LjE3NDQiLCJjX2hhc2giOiI0QjZKWTU4TmstVUJsY3dMa2VLc2lnIiwiYXV0aF90aW1lIjoxNjMwNzQxNDMwLCJub25jZV9zdXBwb3J0ZWQiOnRydWV9.iW0xk__fPD0mlh9UU-vh9VnR8yekWq64sl5re5d7UmDJxb1Fzk1Kca-hkA_Ka1LhSmKADdFW0DYEZhckqh49DgFtFdx6hM9t7guK3yrvBglhF5LAyb8NR028npxioLTTIgP_aR6Bpy5AyLQrU-yYEx2WTPYV5ln9n8vW154gZKRyl2KBlj9fS11BL_X1UFbFrL21GG_iPbB4qt5ywwTPoJ-diGN5JQzP5fk4yU4e4YmHhxJrT0NTTux2mB3lGJLa6YN-JYe_BuVV9J-sg_2r_ugTOUp3xQpfntu8xgQrY5W0oPxAPM4sibNLsye2kgPYYxfRYowc0JIjOcOd_JHDbQ";
+
+		let res = validate(
+			"001026.16112b36378440d995af22b268f00984.1744".into(),
+			token.to_string(),
+			false,
+		)
+		.await;
+
+		assert!(is_expired(&res));
 	}
 
 	#[tokio::test]

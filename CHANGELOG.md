@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## Added
+- helper fn `is_expired` to identify if a signature was expired
+
 ## Changed
 - expose `decode_token` fn publicly
 - allow decoding token with different `Claims`
