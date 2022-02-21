@@ -72,7 +72,8 @@ pub async fn decode_token<T: DeserializeOwned>(
 	val.validate_exp = !ignore_expire;
 	let token_data = decode::<T>(
 		token.as_str(),
-		&DecodingKey::from_rsa_components(&pubkey.n, &pubkey.e),
+		&DecodingKey::from_rsa_components(&pubkey.n, &pubkey.e)
+			.unwrap(),
 		&val,
 	)?;
 
