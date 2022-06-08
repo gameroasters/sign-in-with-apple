@@ -93,7 +93,7 @@ pub async fn validate(
 		return Err(Error::IssClaimMismatch);
 	}
 
-	if token_data.claims.sub != client_id {
+	if token_data.claims.aud != client_id {
 		return Err(Error::ClientIdMismatch);
 	}
 	Ok(token_data)
